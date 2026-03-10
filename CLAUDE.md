@@ -11,6 +11,7 @@ Gyógytornász központ weboldala Astro keretrendszerrel. Több gyógytornász d
 - **Éles URL:** https://andrassmuk.github.io/koplanyi-web/
 - **Framework:** Astro 6 (statikus site generator)
 - **Nyelv:** Magyar nyelvű oldal
+- **GitHub token:** `.env` fájlban (GITHUB_TOKEN), gitignore-ban van
 
 ## Fejlesztési parancsok
 
@@ -21,32 +22,49 @@ npm run build        # Produkciós build (dist/ mappába)
 npm run preview      # Build előnézet lokálisan
 ```
 
+Vite cache probléma esetén: `rm -rf node_modules/.vite` majd újraindítás.
+
 ## Architektúra
 
-- `src/layouts/BaseLayout.astro` - Fő layout: navbar, footer, globális CSS változók, mobil menü. Minden oldal ezt használja.
-- `src/pages/` - File-based routing. Oldalak:
-  - `index.astro` - Főoldal (hero, szolgáltatás kártyák, számok, szobabérlés CTA)
-  - `szolgaltatasok.astro` - Részletes szolgáltatások árakkal
-  - `szobak.astro` - 4 bérelhető szoba leírás, felszereltség, árak (óra/nap/hó)
-  - `csapat.astro` - 6 fős csapat placeholder profilokkal
-  - `kapcsolat.astro` - Elérhetőségek, Google Maps embed (Széll Kálmán tér), parkolási infó
-- `public/` - Statikus fájlok (favicon)
-- `.github/workflows/deploy.yml` - GitHub Pages auto-deploy main branch-ről
+### Oldalak (`src/pages/`)
+- `index.astro` - Főoldal (hero, szolgáltatás kártyák, számok, szobabérlés CTA)
+- `szolgaltatasok.astro` - Szolgáltatások árakkal (content collection-ből)
+- `szobak.astro` - 4 bérelhető szoba fotókkal, felszereltséggel, árakkal
+- `galeria.astro` - Képgaléria lightbox-szal (szobánként csoportosítva)
+- `blog/index.astro` - Blog lista (dátum szerint rendezve)
+- `blog/[...slug].astro` - Egyedi blog bejegyzés oldalak
+- `csapat.astro` - 6 fős csapat placeholder profilokkal
+- `kapcsolat.astro` - Elérhetőségek, Google Maps, parkolás, kontakt form
+
+### Content Collections (`src/content/`)
+Astro 6 glob() loader-rel, schema: `src/content.config.ts`
+
+- `szolgaltatasok/` - Szolgáltatások (title, icon, order, prices)
+- `szobak/` - Szobák (title, size, order, images, prices, equipment)
+- `csapat/` - Csapattagok (name, role, initials, order, specialties)
+- `blog/` - Blog posztok (title, date, author, excerpt, tags)
+
+Új tartalom = új `.md` fájl a megfelelő mappába. Astro 6-ban `render(entry)` kell importálni `astro:content`-ből (nem `entry.render()`).
+
+### Layout és egyéb
+- `src/layouts/BaseLayout.astro` - Fő layout: navbar, footer, globális CSS, mobil menü
+- `public/images/szobak/` - Szoba fotók
+- `.github/workflows/deploy.yml` - GitHub Pages auto-deploy main branch push-ra
 
 ## GitHub Pages deploy
 
-Az `astro.config.mjs`-ben `site: 'https://andrassmuk.github.io'` és `base: '/koplanyi-web'`. Push to main = auto deploy GitHub Actions-szel. A repo Settings > Pages-ben "GitHub Actions" source kell legyen kiválasztva.
+Az `astro.config.mjs`-ben `site` + `base: '/koplanyi-web/'` (trailing slash fontos!). Push to main = auto deploy. A repo Settings > Pages > Source: "GitHub Actions".
 
 ## Design
 
-- Színek: zöld (#2a7d5f primary), CSS custom properties (:root változók a BaseLayout-ban)
-- Vanilla CSS, nincs framework - scoped `<style>` blokkok + `<style is:global>` a layout-ban
+- Színek: zöld (#2a7d5f primary), CSS custom properties a BaseLayout `:root`-ban
+- Vanilla CSS, nincs framework - scoped `<style>` blokkok + `<style is:global>`
 - Reszponzív: mobil hamburger menü, grid-ek auto-fit-tel
-- Placeholder képek helyett emoji/szöveges placeholderek vannak, valódi fotókra cserélendők
 
 ## Konvenciók
 
 - Magyar nyelvű tartalom, angol nyelvű kód (változónevek, komponensek)
 - Astro komponensek (.astro) preferáltak, JS framework csak ha szükséges
 - `import.meta.env.BASE_URL` használata minden belső linknél (GitHub Pages subpath miatt)
-- Árak és tartalmak placeholderek, valódi adatokra cserélendők
+- Commitok logikusan szétválasztva (tartalom vs oldalak vs funkció)
+- Placeholder nevek és árak - valódi adatokra cserélendők
