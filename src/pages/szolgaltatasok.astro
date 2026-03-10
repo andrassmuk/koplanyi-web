@@ -1,6 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
 const base = import.meta.env.BASE_URL;
+const szolgaltatasok = (await getCollection('szolgaltatasok')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(szolgaltatasok.map(async (s) => {
+  const { Content } = await render(s);
+  return { ...s, Content };
+}));
 ---
 
 <BaseLayout title="Szolgáltatások">
@@ -10,75 +17,22 @@ const base = import.meta.env.BASE_URL;
   </section>
 
   <section class="section">
-    <div class="service-detail" id="gerincerapia">
-      <div class="service-info">
-        <h2>Gerincterápia</h2>
-        <p>A gerincproblémák kezelésére specializálódott szolgáltatásunk magában foglalja a diagnosztikát, a manuális technikákat és a személyre szabott gyakorlatsorokat.</p>
-        <ul>
-          <li>Porckorongsérv konzervatív kezelése</li>
-          <li>Nyaki és háti gerinc problémák</li>
-          <li>Tartásjavító terápia</li>
-          <li>Ülőmunkából eredő panaszok kezelése</li>
-        </ul>
-        <p class="price">Első vizsgálat: <strong>15 000 Ft</strong> (60 perc)<br/>Kontroll kezelés: <strong>10 000 Ft</strong> (45 perc)</p>
-      </div>
-    </div>
-
-    <div class="service-detail" id="mozgasterapia">
-      <div class="service-info">
-        <h2>Mozgásterápia</h2>
-        <p>Egyénre szabott mozgásprogramok kialakítása, amelyek a mindennapi életminőséget javítják. Modern szemléletű funkcionális mozgásfelmérés alapján dolgozunk.</p>
-        <ul>
-          <li>Funkcionális mozgásfelmérés (FMS)</li>
-          <li>Egyéni gyakorlatsor összeállítása</li>
-          <li>Sportolók mozgásfejlesztése</li>
-          <li>Prevenciós programok</li>
-        </ul>
-        <p class="price">Mozgásfelmérés: <strong>18 000 Ft</strong> (75 perc)<br/>Terápiás alkalom: <strong>12 000 Ft</strong> (50 perc)</p>
-      </div>
-    </div>
-
-    <div class="service-detail" id="rehabilitacio">
-      <div class="service-info">
-        <h2>Rehabilitáció</h2>
-        <p>Műtét utáni és sérülés utáni komplex rehabilitáció. Szoros együttműködésben dolgozunk ortopéd és traumatológus szakorvosokkal.</p>
-        <ul>
-          <li>Térd- és csípőprotézis utáni rehabilitáció</li>
-          <li>Válműtét utáni gyógytorna</li>
-          <li>Sportzérülések rehabilitációja</li>
-          <li>Törés utáni mobilizálás</li>
-        </ul>
-        <p class="price">Rehabilitációs kezelés: <strong>12 000 Ft</strong> (50 perc)<br/>Bérlet (10 alkalom): <strong>100 000 Ft</strong></p>
-      </div>
-    </div>
-
-    <div class="service-detail" id="csoportos">
-      <div class="service-info">
-        <h2>Csoportos torna</h2>
-        <p>Kiscsoportos foglalkozásaink maximum 8 fős létszámmal biztosítják az egyéni odafigyelést csoportos környezetben.</p>
-        <ul>
-          <li>Gerinctorna (kezdő és haladó)</li>
-          <li>Tartásjavító torna</li>
-          <li>Senior torna (60+)</li>
-          <li>Várandós torna</li>
-        </ul>
-        <p class="price">Alkalmi jegy: <strong>3 500 Ft</strong><br/>Havi bérlet (8 alkalom): <strong>22 000 Ft</strong></p>
-      </div>
-    </div>
-
-    <div class="service-detail" id="manualterapia">
-      <div class="service-info">
-        <h2>Manuálterápia</h2>
-        <p>Kézzel végzett speciális technikák az ízületi blokádok oldására, a lágyrész-problémák kezelésére és a fájdalomcsillapításra.</p>
-        <ul>
-          <li>Ízületi mobilizáció</li>
-          <li>Lágyrész technikák</li>
-          <li>Trigger pont terápia</li>
-          <li>Fascia kezelés</li>
-        </ul>
-        <p class="price">Manuálterápia: <strong>14 000 Ft</strong> (45 perc)</p>
-      </div>
-    </div>
+    {rendered.map((service) => (
+        <div class="service-detail">
+          <div class="service-header">
+            <span class="service-icon">{service.data.icon}</span>
+            <h2>{service.data.title}</h2>
+          </div>
+          <div class="service-body">
+            <service.Content />
+          </div>
+          <div class="price">
+            {service.data.prices.map((p) => (
+              <span>{p.label}: <strong>{p.value}</strong></span>
+            ))}
+          </div>
+        </div>
+    ))}
 
     <div class="cta-section">
       <p>Nem biztos benne, melyik szolgáltatás az Ön számára a legmegfelelőbb?</p>
@@ -117,30 +71,39 @@ const base = import.meta.env.BASE_URL;
     box-shadow: var(--shadow);
   }
 
-  .service-info h2 {
-    color: var(--primary-dark);
+  .service-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     margin-bottom: 1rem;
+  }
+
+  .service-icon {
+    font-size: 2rem;
+  }
+
+  .service-header h2 {
+    color: var(--primary-dark);
     font-size: 1.6rem;
   }
 
-  .service-info p {
+  .service-body {
     color: var(--text-light);
-    margin-bottom: 1rem;
-  }
-
-  .service-info ul {
-    list-style: none;
     margin-bottom: 1.5rem;
   }
 
-  .service-info li {
-    padding: 0.3rem 0;
-    padding-left: 1.5rem;
+  .service-body :global(ul) {
+    list-style: none;
+    padding: 0;
+  }
+
+  .service-body :global(li) {
+    padding: 0.3rem 0 0.3rem 1.5rem;
     position: relative;
     color: var(--text);
   }
 
-  .service-info li::before {
+  .service-body :global(li::before) {
     content: '✓';
     position: absolute;
     left: 0;
@@ -153,7 +116,9 @@ const base = import.meta.env.BASE_URL;
     padding: 1rem 1.5rem;
     border-radius: 8px;
     font-size: 0.95rem;
-    color: var(--text) !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
   }
 
   .cta-section {

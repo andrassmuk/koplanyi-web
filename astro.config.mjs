@@ -4,5 +4,6 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://andrassmuk.github.io',
-  base: '/koplanyi-web',
+  base: '/koplanyi-web/',
+  trailingSlash: 'always',
 });

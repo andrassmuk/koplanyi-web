@@ -1,6 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
 const base = import.meta.env.BASE_URL;
+const szobak = (await getCollection('szobak')).sort((a, b) => a.data.order - b.data.order);
+const renderedRooms = await Promise.all(szobak.map(async (r) => {
+  const { Content } = await render(r);
+  return { ...r, Content };
+}));
 ---
 
 <BaseLayout title="Szobabérlés">
@@ -13,141 +20,36 @@ const base = import.meta.env.BASE_URL;
     <p class="intro">Kezelőszobáinkat gyógytornászok, fizioterapeuták, masszőrök és egyéb terapeuta szakemberek számára kínáljuk bérbeadásra. Minden szoba teljesen felszerelt, azonnal használatba vehető.</p>
 
     <div class="rooms-grid">
-      <!-- Szoba 1 -->
-      <div class="room-card">
-        <div class="room-image">
-          <div class="room-placeholder">🛏️<br/>Kezelőszoba</div>
-        </div>
-        <div class="room-info">
-          <h2>1. szoba - Kezelőszoba „A"</h2>
-          <span class="room-size">18 m²</span>
-          <p>Egyéni kezelésekre optimalizált, csendes szoba természetes megvilágítással.</p>
-          <h4>Felszereltség:</h4>
-          <ul>
-            <li>Állítható magasságú kezelőágy</li>
-            <li>Mosdó meleg-hideg vízzel</li>
-            <li>Tükör és öltözősarok</li>
-            <li>Klíma</li>
-            <li>Wi-Fi</li>
-          </ul>
-          <div class="room-pricing">
-            <div class="price-item">
-              <span class="price-label">Óradíj</span>
-              <span class="price-value">3 500 Ft</span>
+      {renderedRooms.map((room, i) => (
+          <div class="room-card">
+            <div class="room-image">
+              <div class="room-placeholder">{room.data.icon}</div>
             </div>
-            <div class="price-item">
-              <span class="price-label">Napi díj</span>
-              <span class="price-value">15 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Havi bérlés</span>
-              <span class="price-value">180 000 Ft</span>
+            <div class="room-info">
+              <h2>{i + 1}. szoba - {room.data.title}</h2>
+              <span class="room-size">{room.data.size}</span>
+              <div class="room-desc"><room.Content /></div>
+              <h4>Felszereltség:</h4>
+              <ul>
+                {room.data.equipment.map((item) => <li>{item}</li>)}
+              </ul>
+              <div class="room-pricing">
+                <div class="price-item">
+                  <span class="price-label">Óradíj</span>
+                  <span class="price-value">{room.data.prices.hourly}</span>
+                </div>
+                <div class="price-item">
+                  <span class="price-label">Napi díj</span>
+                  <span class="price-value">{room.data.prices.daily}</span>
+                </div>
+                <div class="price-item">
+                  <span class="price-label">Havi bérlés</span>
+                  <span class="price-value">{room.data.prices.monthly}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Szoba 2 -->
-      <div class="room-card">
-        <div class="room-image">
-          <div class="room-placeholder">🏋️<br/>Tornaszoba</div>
-        </div>
-        <div class="room-info">
-          <h2>2. szoba - Kezelőszoba „B"</h2>
-          <span class="room-size">22 m²</span>
-          <p>Nagyobb alapterületű szoba, akár páros kezelésekre vagy kisebb csoportos munkára is alkalmas.</p>
-          <h4>Felszereltség:</h4>
-          <ul>
-            <li>2 db kezelőágy</li>
-            <li>Mosdó meleg-hideg vízzel</li>
-            <li>TRX felfüggesztő rendszer</li>
-            <li>Ellenállás gumiszalagok</li>
-            <li>Klíma és Wi-Fi</li>
-          </ul>
-          <div class="room-pricing">
-            <div class="price-item">
-              <span class="price-label">Óradíj</span>
-              <span class="price-value">4 500 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Napi díj</span>
-              <span class="price-value">18 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Havi bérlés</span>
-              <span class="price-value">220 000 Ft</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Szoba 3 -->
-      <div class="room-card">
-        <div class="room-image">
-          <div class="room-placeholder">🧘<br/>Torna terem</div>
-        </div>
-        <div class="room-info">
-          <h2>3. szoba - Csoportos terem</h2>
-          <span class="room-size">45 m²</span>
-          <p>Csoportos foglalkozásokra, tornára, jógára tervezett tágas terem tükörfallal.</p>
-          <h4>Felszereltség:</h4>
-          <ul>
-            <li>Tükörfal</li>
-            <li>10 db tornaszőnyeg</li>
-            <li>Fitball labdák, foam rollerek</li>
-            <li>Bluetooth hangszóró rendszer</li>
-            <li>Klíma és Wi-Fi</li>
-          </ul>
-          <div class="room-pricing">
-            <div class="price-item">
-              <span class="price-label">Óradíj</span>
-              <span class="price-value">6 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Napi díj</span>
-              <span class="price-value">25 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Havi bérlés</span>
-              <span class="price-value">300 000 Ft</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Szoba 4 -->
-      <div class="room-card">
-        <div class="room-image">
-          <div class="room-placeholder">💆<br/>Masszázs szoba</div>
-        </div>
-        <div class="room-info">
-          <h2>4. szoba - Masszázsszoba</h2>
-          <span class="room-size">14 m²</span>
-          <p>Intim, nyugodt atmoszférájú szoba masszázsra és relaxációs kezelésekre.</p>
-          <h4>Felszereltség:</h4>
-          <ul>
-            <li>Professzionális masszázságy</li>
-            <li>Mosdó</li>
-            <li>Fűthető padló</li>
-            <li>Hangulat világítás</li>
-            <li>Klíma és Wi-Fi</li>
-          </ul>
-          <div class="room-pricing">
-            <div class="price-item">
-              <span class="price-label">Óradíj</span>
-              <span class="price-value">3 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Napi díj</span>
-              <span class="price-value">12 000 Ft</span>
-            </div>
-            <div class="price-item">
-              <span class="price-label">Havi bérlés</span>
-              <span class="price-value">150 000 Ft</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
 
     <div class="common-features">
@@ -202,7 +104,7 @@ const base = import.meta.env.BASE_URL;
 
   .room-card {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 200px 1fr;
     border: 1px solid rgba(0,0,0,0.06);
     border-radius: var(--radius);
     overflow: hidden;
@@ -218,14 +120,10 @@ const base = import.meta.env.BASE_URL;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 250px;
   }
 
   .room-placeholder {
-    text-align: center;
-    font-size: 2.5rem;
-    color: var(--text-light);
-    line-height: 1.4;
+    font-size: 3rem;
   }
 
   .room-info {
@@ -249,7 +147,7 @@ const base = import.meta.env.BASE_URL;
     margin-bottom: 1rem;
   }
 
-  .room-info p {
+  .room-desc {
     color: var(--text-light);
     margin-bottom: 1rem;
   }
@@ -262,11 +160,11 @@ const base = import.meta.env.BASE_URL;
   .room-info ul {
     list-style: none;
     margin-bottom: 1.5rem;
+    padding: 0;
   }
 
   .room-info li {
-    padding: 0.2rem 0;
-    padding-left: 1.5rem;
+    padding: 0.2rem 0 0.2rem 1.5rem;
     position: relative;
     font-size: 0.95rem;
   }
@@ -342,7 +240,6 @@ const base = import.meta.env.BASE_URL;
   .cta-section p {
     margin-bottom: 1rem;
     font-size: 1.1rem;
-    color: var(--text);
   }
 
   .btn {
@@ -355,22 +252,11 @@ const base = import.meta.env.BASE_URL;
     text-decoration: none;
   }
 
-  .btn-primary {
-    background: var(--primary);
-    color: #fff;
-  }
-
-  .btn-primary:hover {
-    background: var(--primary-dark);
-  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
 
   @media (max-width: 768px) {
-    .room-card {
-      grid-template-columns: 1fr;
-    }
-
-    .room-image {
-      min-height: 150px;
-    }
+    .room-card { grid-template-columns: 1fr; }
+    .room-image { min-height: 100px; }
   }
 </style>

@@ -1,5 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+const csapat = (await getCollection('csapat')).sort((a, b) => a.data.order - b.data.order);
+const renderedTeam = await Promise.all(csapat.map(async (m) => {
+  const { Content } = await render(m);
+  return { ...m, Content };
+}));
 ---
 
 <BaseLayout title="Csapatunk">
@@ -10,71 +17,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="section">
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-avatar">KA</div>
-        <h3>Dr. Kovács Anna</h3>
-        <span class="role">Vezető gyógytornász</span>
-        <p>12 év tapasztalat gerincterápiában és mozgásszervi rehabilitációban. Specialitása a porckorongsérv konzervatív kezelése.</p>
-        <div class="specialties">
-          <span>Gerincterápia</span>
-          <span>Rehabilitáció</span>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-avatar">NP</div>
-        <h3>Nagy Péter</h3>
-        <span class="role">Gyógytornász, manuálterapeuta</span>
-        <p>Sportolók kezelésére specializálódott. Korábban válogatott sportolók rehabilitációjában vett részt.</p>
-        <div class="specialties">
-          <span>Sportrehabilitáció</span>
-          <span>Manuálterápia</span>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-avatar">SÉ</div>
-        <h3>Szabó Éva</h3>
-        <span class="role">Gyógytornász</span>
-        <p>Várandós- és szülés utáni tornára, valamint senior rehabilitációra specializálódott szakember.</p>
-        <div class="specialties">
-          <span>Várandós torna</span>
-          <span>Senior torna</span>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-avatar">TM</div>
-        <h3>Tóth Márk</h3>
-        <span class="role">Fizioterapeuta</span>
-        <p>Funkcionális mozgásfelmérés és korrekciós gyakorlatok specialistája. FMS tanúsítvánnyal rendelkezik.</p>
-        <div class="specialties">
-          <span>Mozgásterápia</span>
-          <span>FMS</span>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-avatar">HK</div>
-        <h3>Horváth Kata</h3>
-        <span class="role">Gyógytornász</span>
-        <p>Csoportos foglalkozások vezetője. Gerinctorna és tartásjavító programok kidolgozója.</p>
-        <div class="specialties">
-          <span>Csoportos torna</span>
-          <span>Tartásjavítás</span>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-avatar">BL</div>
-        <h3>Balogh László</h3>
-        <span class="role">Masszőr, manuálterapeuta</span>
-        <p>Gyógymasszőr és manuálterapeuta, a lágyrész technikák és trigger pont terápia specialistája.</p>
-        <div class="specialties">
-          <span>Masszázs</span>
-          <span>Trigger pont</span>
-        </div>
-      </div>
+      {renderedTeam.map((member) => (
+          <div class="team-card">
+            <div class="team-avatar">{member.data.initials}</div>
+            <h3>{member.data.name}</h3>
+            <span class="role">{member.data.role}</span>
+            <div class="bio"><member.Content /></div>
+            <div class="specialties">
+              {member.data.specialties.map((s) => <span>{s}</span>)}
+            </div>
+          </div>
+      ))}
     </div>
   </section>
 </BaseLayout>
@@ -142,7 +95,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-bottom: 1rem;
   }
 
-  .team-card p {
+  .bio {
     color: var(--text-light);
     font-size: 0.95rem;
     margin-bottom: 1rem;
