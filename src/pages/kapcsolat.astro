@@ -55,6 +55,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
 
+    <!-- Kontakt form -->
+    <div class="form-section">
+      <h2>Írjon nekünk</h2>
+      <p class="form-subtitle">Töltse ki az alábbi űrlapot, és megnyílik az email kliense az előre kitöltött üzenettel.</p>
+      <form id="contact-form" class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Név *</label>
+            <input type="text" id="name" required placeholder="Teljes név" />
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefonszám</label>
+            <input type="tel" id="phone" placeholder="+36 ..." />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="subject">Tárgy *</label>
+          <select id="subject" required>
+            <option value="">Válasszon...</option>
+            <option value="Időpontfoglalás">Időpontfoglalás</option>
+            <option value="Szobabérlés érdeklődés">Szobabérlés érdeklődés</option>
+            <option value="Általános kérdés">Általános kérdés</option>
+            <option value="Visszajelzés">Visszajelzés</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Üzenet *</label>
+          <textarea id="message" rows="5" required placeholder="Írja le, miben segíthetünk..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Küldés emailben</button>
+      </form>
+    </div>
+
     <!-- Parkolás -->
     <div class="parking-section">
       <h2>🅿️ Parkolási lehetőségek</h2>
@@ -189,9 +222,109 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 0.95rem;
   }
 
+  .form-section {
+    margin-bottom: 3rem;
+    padding: 2.5rem;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: var(--radius);
+  }
+
+  .form-section h2 {
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-subtitle {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+  }
+
+  .btn {
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-dark);
+  }
+
   @media (max-width: 768px) {
     .contact-grid {
       grid-template-columns: 1fr;
     }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
+
+<script>
+  document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('name') as HTMLInputElement).value;
+    const phone = (document.getElementById('phone') as HTMLInputElement).value;
+    const subject = (document.getElementById('subject') as HTMLSelectElement).value;
+    const message = (document.getElementById('message') as HTMLTextAreaElement).value;
+
+    const body = `Név: ${name}\nTelefon: ${phone || 'Nem adta meg'}\n\n${message}`;
+    const mailto = `mailto:info@mozgaskozpont.hu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  });
+</script>
