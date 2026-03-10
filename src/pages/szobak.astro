@@ -22,8 +22,17 @@ const renderedRooms = await Promise.all(szobak.map(async (r) => {
     <div class="rooms-grid">
       {renderedRooms.map((room, i) => (
           <div class="room-card">
-            <div class="room-image">
-              <div class="room-placeholder">{room.data.icon}</div>
+            <div class="room-images">
+              {room.data.images?.length ? (
+                <>
+                  <img src={room.data.images[0]} alt={room.data.title} loading="lazy" />
+                  {room.data.images.length > 1 && (
+                    <a href={`${base}galeria/`} class="more-photos">+{room.data.images.length - 1} fotó</a>
+                  )}
+                </>
+              ) : (
+                <div class="room-placeholder">{room.data.icon}</div>
+              )}
             </div>
             <div class="room-info">
               <h2>{i + 1}. szoba - {room.data.title}</h2>
@@ -104,7 +113,7 @@ const renderedRooms = await Promise.all(szobak.map(async (r) => {
 
   .room-card {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 320px 1fr;
     border: 1px solid rgba(0,0,0,0.06);
     border-radius: var(--radius);
     overflow: hidden;
@@ -115,15 +124,43 @@ const renderedRooms = await Promise.all(szobak.map(async (r) => {
     box-shadow: var(--shadow);
   }
 
-  .room-image {
+  .room-images {
     background: var(--bg-alt);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    min-height: 250px;
+  }
+
+  .room-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .more-photos {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .more-photos:hover {
+    background: rgba(0,0,0,0.85);
   }
 
   .room-placeholder {
     font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
   }
 
   .room-info {
@@ -257,6 +294,6 @@ const renderedRooms = await Promise.all(szobak.map(async (r) => {
 
   @media (max-width: 768px) {
     .room-card { grid-template-columns: 1fr; }
-    .room-image { min-height: 100px; }
+    .room-images { max-height: 250px; }
   }
 </style>

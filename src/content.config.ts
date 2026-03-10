@@ -21,6 +21,7 @@ const szobak = defineCollection({
     icon: z.string(),
     size: z.string(),
     order: z.number(),
+    images: z.array(z.string()).optional(),
     prices: z.object({
       hourly: z.string(),
       daily: z.string(),
