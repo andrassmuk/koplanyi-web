@@ -58,7 +58,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- Kontakt form -->
     <div class="form-section">
       <h2>Írjon nekünk</h2>
-      <p class="form-subtitle">Töltse ki az alábbi űrlapot, és megnyílik az email kliense az előre kitöltött üzenettel.</p>
+      <p class="form-subtitle">Töltse ki az alábbi űrlapot, és hamarosan felvesszük Önnel a kapcsolatot.</p>
       <form id="contact-form" class="contact-form">
         <div class="form-row">
           <div class="form-group">
@@ -66,25 +66,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <input type="text" id="name" required placeholder="Teljes név" />
           </div>
           <div class="form-group">
+            <label for="email">Email cím *</label>
+            <input type="email" id="email" required placeholder="pelda@email.hu" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label for="phone">Telefonszám</label>
             <input type="tel" id="phone" placeholder="+36 ..." />
           </div>
-        </div>
-        <div class="form-group">
-          <label for="subject">Tárgy *</label>
-          <select id="subject" required>
-            <option value="">Válasszon...</option>
-            <option value="Időpontfoglalás">Időpontfoglalás</option>
-            <option value="Szobabérlés érdeklődés">Szobabérlés érdeklődés</option>
-            <option value="Általános kérdés">Általános kérdés</option>
-            <option value="Visszajelzés">Visszajelzés</option>
-          </select>
+          <div class="form-group">
+            <label for="subject">Tárgy *</label>
+            <select id="subject" required>
+              <option value="">Válasszon...</option>
+              <option value="Időpontfoglalás">Időpontfoglalás</option>
+              <option value="Szobabérlés érdeklődés">Szobabérlés érdeklődés</option>
+              <option value="Általános kérdés">Általános kérdés</option>
+              <option value="Visszajelzés">Visszajelzés</option>
+            </select>
+          </div>
         </div>
         <div class="form-group">
           <label for="message">Üzenet *</label>
           <textarea id="message" rows="5" required placeholder="Írja le, miben segíthetünk..."></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Küldés emailben</button>
+        <button type="submit" class="btn btn-primary">Üzenet küldése</button>
+        <p id="form-success" class="form-success" style="display:none;">Köszönjük megkeresését! Hamarosan felvesszük Önnel a kapcsolatot.</p>
       </form>
     </div>
 
@@ -304,6 +311,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: var(--primary-dark);
   }
 
+  .form-success {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    font-size: 1.05rem;
+  }
+
   @media (max-width: 768px) {
     .contact-grid {
       grid-template-columns: 1fr;
@@ -318,13 +336,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <script>
   document.getElementById('contact-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = (document.getElementById('name') as HTMLInputElement).value;
-    const phone = (document.getElementById('phone') as HTMLInputElement).value;
-    const subject = (document.getElementById('subject') as HTMLSelectElement).value;
-    const message = (document.getElementById('message') as HTMLTextAreaElement).value;
-
-    const body = `Név: ${name}\nTelefon: ${phone || 'Nem adta meg'}\n\n${message}`;
-    const mailto = `mailto:info@mozgaskozpont.hu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+    // TODO: Implement actual email sending (e.g. Formspree, EmailJS)
+    // For now, just show a success message
+    const form = e.target as HTMLFormElement;
+    form.style.display = 'none';
+    document.getElementById('form-success')!.style.display = 'block';
   });
 </script>
