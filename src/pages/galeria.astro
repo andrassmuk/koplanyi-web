@@ -1,0 +1,221 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const szobak = (await getCollection('szobak')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Galeria">
+  <section class="page-hero">
+    <h1>Galeria</h1>
+    <p>Tekintse meg szobainkat es a rendelo kornyezetet</p>
+  </section>
+
+  <section class="section">
+    {szobak.map((room, i) => (
+      room.data.images?.length ? (
+        <div class="gallery-group">
+          <h2>{i + 1}. szoba - {room.data.title}</h2>
+          <p class="gallery-meta">{room.data.size}</p>
+          <div class="gallery-grid">
+            {room.data.images.map((img, j) => (
+              <a href={img} class="gallery-item" data-index={j}>
+                <img src={img} alt={`${room.data.title} - ${j + 1}. kep`} loading="lazy" />
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null
+    ))}
+  </section>
+
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close" aria-label="Bezaras">&times;</button>
+    <button class="lightbox-prev" aria-label="Elozo">&#8249;</button>
+    <button class="lightbox-next" aria-label="Kovetkezo">&#8250;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #d4edda 100%);
+    padding: 4rem 1.5rem 3rem;
+    text-align: center;
+  }
+
+  .page-hero h1 {
+    font-size: 2.4rem;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-hero p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+  }
+
+  .gallery-group {
+    margin-bottom: 3rem;
+  }
+
+  .gallery-group h2 {
+    color: var(--primary-dark);
+    margin-bottom: 0.3rem;
+    font-size: 1.5rem;
+  }
+
+  .gallery-meta {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .gallery-item {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .gallery-item:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow);
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .lightbox.active {
+    display: flex;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.5rem;
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .lightbox-prev:hover,
+  .lightbox-next:hover {
+    background: rgba(255,255,255,0.3);
+  }
+
+  .lightbox-prev { left: 1rem; }
+  .lightbox-next { right: 1rem; }
+
+  .lightbox-caption {
+    color: #ccc;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+  }
+</style>
+
+<script>
+  const lightbox = document.getElementById('lightbox')!;
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+  const lightboxCaption = document.getElementById('lightbox-caption')!;
+  const items = document.querySelectorAll('.gallery-item') as NodeListOf<HTMLAnchorElement>;
+  let currentIndex = 0;
+  const allImages: { src: string; caption: string }[] = [];
+
+  items.forEach((item, i) => {
+    const img = item.querySelector('img')!;
+    allImages.push({ src: item.href, caption: img.alt });
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentIndex = i;
+      showImage();
+      lightbox.classList.add('active');
+    });
+  });
+
+  function showImage() {
+    lightboxImg.src = allImages[currentIndex].src;
+    lightboxCaption.textContent = allImages[currentIndex].caption;
+  }
+
+  document.querySelector('.lightbox-close')?.addEventListener('click', () => {
+    lightbox.classList.remove('active');
+  });
+
+  document.querySelector('.lightbox-prev')?.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+    showImage();
+  });
+
+  document.querySelector('.lightbox-next')?.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % allImages.length;
+    showImage();
+  });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) lightbox.classList.remove('active');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') lightbox.classList.remove('active');
+    if (e.key === 'ArrowLeft') { currentIndex = (currentIndex - 1 + allImages.length) % allImages.length; showImage(); }
+    if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % allImages.length; showImage(); }
+  });
+</script>
