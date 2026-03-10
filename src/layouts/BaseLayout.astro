@@ -1,0 +1,282 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="MozgásKözpont - Gyógytornász rendelő és terembérlés Budapest, Széll Kálmán tér" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{title} | MozgásKözpont</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <a href={base} class="logo">
+          <span class="logo-icon">✦</span>
+          <span class="logo-text">MozgásKözpont</span>
+        </a>
+        <button class="menu-toggle" aria-label="Menü">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href={base}>Főoldal</a></li>
+          <li><a href={`${base}szolgaltatasok/`}>Szolgáltatások</a></li>
+          <li><a href={`${base}szobak/`}>Szobabérlés</a></li>
+          <li><a href={`${base}csapat/`}>Csapatunk</a></li>
+          <li><a href={`${base}kapcsolat/`}>Kapcsolat</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>MozgásKözpont</h3>
+          <p>Professzionális gyógytorna és mozgásterápia Budapest szívében.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Elérhetőség</h3>
+          <p>1024 Budapest, Széll Kálmán tér 1.</p>
+          <p>Tel: +36 1 234 5678</p>
+          <p>Email: info@mozgaskozpont.hu</p>
+        </div>
+        <div class="footer-section">
+          <h3>Nyitvatartás</h3>
+          <p>Hétfő - Péntek: 7:00 - 20:00</p>
+          <p>Szombat: 8:00 - 14:00</p>
+          <p>Vasárnap: Zárva</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 MozgásKözpont. Minden jog fenntartva.</p>
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      toggle?.addEventListener('click', () => {
+        navLinks?.classList.toggle('active');
+        toggle.classList.toggle('active');
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary: #2a7d5f;
+    --primary-dark: #1e5c46;
+    --primary-light: #e8f5ee;
+    --accent: #3baa7e;
+    --text: #2d3436;
+    --text-light: #636e72;
+    --bg: #ffffff;
+    --bg-alt: #f8faf9;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --radius: 12px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    background: var(--bg);
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.2;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .section {
+    padding: 5rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+</style>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    z-index: 100;
+  }
+
+  .nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    font-size: 1.6rem;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: var(--text);
+    font-weight: 500;
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+
+  .nav-links a:hover {
+    color: var(--primary);
+  }
+
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    transition: 0.3s;
+  }
+
+  .menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+
+  .footer {
+    background: var(--text);
+    color: #ccc;
+    padding: 3rem 1.5rem 1rem;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer h3 {
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .footer p {
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: flex;
+    }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      flex-direction: column;
+      padding: 1.5rem;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+    }
+
+    .nav-links.active {
+      display: flex;
+    }
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Kapcsolat">
+  <section class="page-hero">
+    <h1>Kapcsolat</h1>
+    <p>Vegye fel velünk a kapcsolatot, vagy jöjjön el hozzánk személyesen!</p>
+  </section>
+
+  <section class="section">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="info-card">
+          <h3>📍 Címünk</h3>
+          <p>1024 Budapest<br/>Széll Kálmán tér 1.<br/>2. emelet</p>
+        </div>
+
+        <div class="info-card">
+          <h3>📞 Telefonszám</h3>
+          <p><a href="tel:+3612345678">+36 1 234 5678</a></p>
+          <p class="small">Hívjon minket nyitvatartási időben!</p>
+        </div>
+
+        <div class="info-card">
+          <h3>📧 Email</h3>
+          <p><a href="mailto:info@mozgaskozpont.hu">info@mozgaskozpont.hu</a></p>
+          <p class="small">24 órán belül válaszolunk.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>🕐 Nyitvatartás</h3>
+          <table class="hours-table">
+            <tr><td>Hétfő - Péntek</td><td>7:00 - 20:00</td></tr>
+            <tr><td>Szombat</td><td>8:00 - 14:00</td></tr>
+            <tr><td>Vasárnap</td><td>Zárva</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="map-section">
+        <h3>Térkép</h3>
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2695.5!2d19.0236!3d47.5075!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741dc1433cf18a7%3A0x6b3c5b6b6b6b6b6b!2sSz%C3%A9ll%20K%C3%A1lm%C3%A1n%20t%C3%A9r%2C%20Budapest!5e0!3m2!1shu!2shu!4v1234567890"
+            width="100%"
+            height="350"
+            style="border:0; border-radius: 12px;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="MozgásKözpont helyszíne - Széll Kálmán tér, Budapest">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parkolás -->
+    <div class="parking-section">
+      <h2>🅿️ Parkolási lehetőségek</h2>
+      <div class="parking-grid">
+        <div class="parking-card">
+          <h4>Utcai parkolás</h4>
+          <p>A Széll Kálmán tér környékén fizetős parkolási övezet van. Munkanapokon 8:00-22:00 között kell fizetni, az óradíj kb. 525 Ft. A Lövőház utcában és a Retek utcában általában lehet helyet találni.</p>
+        </div>
+        <div class="parking-card">
+          <h4>Mammut Parkolóház</h4>
+          <p>A Mammut bevásárlóközpont parkolóháza pár perc sétára található. Fedett, biztonságos parkolás kedvező áron, több száz férőhellyel.</p>
+        </div>
+        <div class="parking-card">
+          <h4>Tömegközlekedés</h4>
+          <p>A Széll Kálmán tér Budapest egyik legfontosabb csomópontja. Az M2-es metró, a 4-6-os villamos, valamint számos buszjárat megáll itt. A rendelő 1 perc sétára van a megállóktól.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #d4edda 100%);
+    padding: 4rem 1.5rem 3rem;
+    text-align: center;
+  }
+
+  .page-hero h1 {
+    font-size: 2.4rem;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-hero p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .info-card {
+    background: var(--bg-alt);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+  }
+
+  .info-card h3 {
+    margin-bottom: 0.8rem;
+    color: var(--text);
+    font-size: 1.1rem;
+  }
+
+  .info-card p {
+    color: var(--text-light);
+    margin-bottom: 0.3rem;
+  }
+
+  .info-card a {
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .small {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  .hours-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .hours-table td {
+    padding: 0.4rem 0;
+    color: var(--text-light);
+  }
+
+  .hours-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .map-section h3 {
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .map-container {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .parking-section {
+    margin-top: 1rem;
+  }
+
+  .parking-section h2 {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+  }
+
+  .parking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .parking-card {
+    background: var(--bg-alt);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+  }
+
+  .parking-card h4 {
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .parking-card p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
